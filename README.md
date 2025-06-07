@@ -1,3 +1,6 @@
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+[![License](https://img.shields.io/github/license/serge-pierre/replkit)](./LICENSE)
+
 # DiagShell
 
 DiagShell is a pluggable system diagnostics interpreter based on [replkit](https://github.com/serge-pierre/replkit).
@@ -33,3 +36,24 @@ See Makefile and try make help to see what is possible.
 ```bash
 python diag_repl.py
 ```
+
+---
+
+## Contributing
+
+PRs and bug reports are welcome! Please add tests for any new feature or bugfix.
+
+---
+
+## License
+
+MIT
+
+© 2025–present Serge Pierre
+
+---
+
+## Author
+
+Serge Pierre  
+[https://github.com/serge-pierre](https://github.com/serge-pierre)
