@@ -65,8 +65,15 @@ class DiagSystemInterpreter:
     def cmd_disk(self, args):
         """Display disk usage."""
         try:
-            output = subprocess.check_output(["df", "-h", "--total"]).decode()
-            print(output.strip())
+            result = subprocess.run(
+                ["df", "-h", "--total"], capture_output=True, text=True
+            )
+            if result.stdout:
+                print(result.stdout.strip())
+            if result.stderr:
+                print(f"[disk] Warning: {result.stderr.strip()}")
+            if result.returncode != 0:
+                print(f"[disk] Partial failure (exit code {result.returncode})")
         except Exception as e:
             print(f"[disk] Failed: {e}")
 
