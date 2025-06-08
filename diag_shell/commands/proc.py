@@ -1,51 +1,65 @@
 from diag_shell.output import print_error
+from diag_shell.utils.args import parse_args
 import subprocess
+import json
 
 
 def proc(interpreter, args):
     """
-    Display running processes with optional keyword filtering.
-
-    Usage:
-      proc                          Show all processes (like ps aux)
-      proc <kw1> <kw2> ...          Show lines matching all keywords (AND logic)
-      proc --or <kw1> <kw2> ...     Show lines matching any keyword (OR logic)
+    Display running processes with optional filtering.
 
     Options:
-      --or       Match lines with any of the provided keywords
-
-    Notes:
-    - Keywords are case-insensitive.
-    - If no result appears, try fewer or alternative keywords.
-    - Default logic is AND (all keywords must match)
+      <kw1> <kw2>       : Match all keywords (AND)
+      --or <kw1> <kw2>  : Match any keyword (OR)
+      --grep <pattern>  : Filter raw lines containing <pattern>
+      --limit <n>       : Limit number of lines displayed
+      --json            : Output as structured JSON
     """
     try:
-        output = subprocess.check_output(
-            ["ps", "aux"], text=True, env=interpreter.env
-        ).splitlines()
-        header = output[0]
-        body = output[1:]
-        mode = "and"
+        parsed = parse_args(args, flags={"--or", "--json"}, options={"--grep", "--limit"})
+        keywords = parsed["args"]
+        mode_or = parsed.get("--or", False)
+        grep = parsed.get("--grep")
+        limit = parsed.get("--limit")
+        json_mode = parsed.get("--json", False)
 
-        if args and args[0] == "--or":
-            mode = "or"
-            keywords = [kw.lower() for kw in args[1:]]
-        else:
-            keywords = [kw.lower() for kw in args]
+        if mode_or and not keywords:
+            raise ValueError("--or requires at least one keyword")
+
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit < 1:
+                    raise ValueError("--limit must be a positive integer")
+            except ValueError:
+                raise ValueError("--limit must be a positive integer")
+
+        output = subprocess.check_output(["ps", "aux"], text=True, env=interpreter.env).strip().splitlines()
+        header, *lines = output
 
         if keywords:
-            if mode == "and":
-                filtered = [
-                    line for line in body if all(kw in line.lower() for kw in keywords)
-                ]
-            elif mode == "or":
-                filtered = [
-                    line for line in body if any(kw in line.lower() for kw in keywords)
-                ]
-        else:
-            filtered = body
+            if mode_or:
+                lines = [line for line in lines if any(k in line for k in keywords)]
+            else:
+                lines = [line for line in lines if all(k in line for k in keywords)]
 
-        print(header)
-        print("\n".join(filtered))
+        if grep:
+            lines = [line for line in lines if grep in line]
+
+        if limit:
+            lines = lines[:limit]
+
+        if json_mode:
+            cols = header.split()
+            structured = []
+            for line in lines:
+                parts = line.split(None, len(cols) - 1)
+                if len(parts) == len(cols):
+                    structured.append(dict(zip(cols, parts)))
+            print(json.dumps(structured, indent=2))
+        else:
+            print(header)
+            print("\n".join(lines))
+
     except Exception as e:
         print_error(f"[proc] Failed: {e}")
