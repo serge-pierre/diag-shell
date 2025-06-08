@@ -21,6 +21,13 @@ It provides simple CLI commands for inspecting CPU, memory, disk, network, and u
 
 ## Version History
 
+### v0.2.1 (2025-06-08)
+
+- Refactored interpreter into modular command structure (`commands/`)
+- Each command (cpu, mem, disk, etc.) is in its own file
+- Tests added per command in `tests/test_commands/`
+- All legacy and modular tests pass (100%)
+
 ### v0.2.0 (2025-06-07)
 
 - First fully stable release with formatted diagnostics output
