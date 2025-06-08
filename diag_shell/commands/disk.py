@@ -6,10 +6,7 @@ def disk(interpreter, args):
     """Display disk usage."""
     try:
         result = subprocess.run(
-            ["df", "-h", "--total"],
-            capture_output=True,
-            text=True,
-            env=interpreter.env
+            ["df", "-h", "--total"], capture_output=True, text=True, env=interpreter.env
         )
         if result.stdout:
             lines = result.stdout.strip().splitlines()

@@ -5,7 +5,11 @@ import subprocess
 def mem(interpreter, args):
     """Display memory usage."""
     try:
-        output = subprocess.check_output(["free", "-h"], text=True, env=interpreter.env).strip().splitlines()
+        output = (
+            subprocess.check_output(["free", "-h"], text=True, env=interpreter.env)
+            .strip()
+            .splitlines()
+        )
         if len(output) < 2:
             raise ValueError("Unexpected output from 'free -h'")
 

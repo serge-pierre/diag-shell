@@ -20,7 +20,9 @@ def proc(interpreter, args):
     - Default logic is AND (all keywords must match)
     """
     try:
-        output = subprocess.check_output(["ps", "aux"], text=True, env=interpreter.env).splitlines()
+        output = subprocess.check_output(
+            ["ps", "aux"], text=True, env=interpreter.env
+        ).splitlines()
         header = output[0]
         body = output[1:]
         mode = "and"
@@ -33,9 +35,13 @@ def proc(interpreter, args):
 
         if keywords:
             if mode == "and":
-                filtered = [line for line in body if all(kw in line.lower() for kw in keywords)]
+                filtered = [
+                    line for line in body if all(kw in line.lower() for kw in keywords)
+                ]
             elif mode == "or":
-                filtered = [line for line in body if any(kw in line.lower() for kw in keywords)]
+                filtered = [
+                    line for line in body if any(kw in line.lower() for kw in keywords)
+                ]
         else:
             filtered = body
 

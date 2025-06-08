@@ -15,6 +15,7 @@ def test_crontab_entries(monkeypatch, capsys):
 def test_crontab_none(monkeypatch, capsys):
     def raise_cpe(*a, **kw):
         raise subprocess.CalledProcessError(returncode=1, cmd=a)
+
     monkeypatch.setattr(subprocess, "check_output", raise_cpe)
     crontab(interpreter=MockInterpreter(), args=[])
     out = capsys.readouterr().out

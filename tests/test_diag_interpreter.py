@@ -9,6 +9,7 @@ def mock_subprocess_run_success(*args, **kwargs):
             self.stdout = "mock output"
             self.stderr = ""
             self.returncode = 0
+
     return Result()
 
 
@@ -18,6 +19,7 @@ def mock_subprocess_run_partial_fail(*args, **kwargs):
             self.stdout = "partial output"
             self.stderr = "df: permission denied"
             self.returncode = 1
+
     return Result()
 
 
@@ -65,9 +67,10 @@ def test_disk_success(monkeypatch, capsys):
     assert "output" in out
 
 
-
 def test_cpu_output(monkeypatch, capsys):
-    monkeypatch.setattr(subprocess, "check_output", lambda *a, **kw: "load average: 1.23, 0.56, 0.78")
+    monkeypatch.setattr(
+        subprocess, "check_output", lambda *a, **kw: "load average: 1.23, 0.56, 0.78"
+    )
     interp = DiagSystemInterpreter()
     interp.eval("cpu")
     out = capsys.readouterr().out

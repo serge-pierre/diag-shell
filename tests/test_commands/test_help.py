@@ -11,7 +11,9 @@ class MockInterpreter:
         }
         self.commands["cpu"].__doc__ = "Display CPU usage."
         self.commands["mem"].__doc__ = "Display memory usage."
-        self.commands["proc"].__doc__ = """Display processes.
+        self.commands[
+            "proc"
+        ].__doc__ = """Display processes.
 
 Supports filtering with --or.
 """

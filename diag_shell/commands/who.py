@@ -5,7 +5,9 @@ import subprocess
 def who(interpreter, args):
     """Display users currently logged in."""
     try:
-        output = subprocess.check_output(["who"], text=True, env=interpreter.env).strip()
+        output = subprocess.check_output(
+            ["who"], text=True, env=interpreter.env
+        ).strip()
         if output:
             print(output)
         else:

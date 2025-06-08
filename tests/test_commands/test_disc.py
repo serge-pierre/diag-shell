@@ -5,8 +5,7 @@ from diag_shell.commands.disk import disk
 
 def test_disk_output(monkeypatch, capsys):
     output = (
-        "Filesystem Size Used Avail Use% Mounted on\n"
-        "/dev/sda1 100G 50G 50G 50% /"
+        "Filesystem Size Used Avail Use% Mounted on\n" "/dev/sda1 100G 50G 50G 50% /"
     )
 
     def mock_run(*args, **kwargs):
@@ -14,6 +13,7 @@ def test_disk_output(monkeypatch, capsys):
             stdout = output
             stderr = ""
             returncode = 0
+
         return Result()
 
     monkeypatch.setattr(subprocess, "run", mock_run)
