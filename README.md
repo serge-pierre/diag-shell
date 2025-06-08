@@ -7,7 +7,27 @@ DiagShell is a pluggable system diagnostics interpreter based on [replkit](https
 
 It provides simple CLI commands for inspecting CPU, memory, disk, network, and uptime information using existing system tools.
 
-## Installation
+## Features
+
+- Modular REPL interpreter based on replkit
+- Diagnostics commands: `cpu`, `mem`, `disk`, `net`, `uptime`, `proc`
+- Formatted and readable output (`print_kv`, `print_table`)
+- Locale-independent parsing (`LANG=C`)
+- Filterable `proc` with support for `--or`
+- Persistent aliases and history
+- Tested with pytest (100% success)
+
+## Version History
+
+### v0.2.0 (2025-06-07)
+
+- First fully stable release with formatted diagnostics output
+- Forced locale (`LANG=C`) for universal parsing
+- `print_table()` for aligned views of disk and memory
+- `proc` supports `AND` and `--or` filtering
+- Unit tests pass (10/10)
+
+### Installation
 
 ```bash
 git clone https://github.com/serge-pierre/diag-shell.git
