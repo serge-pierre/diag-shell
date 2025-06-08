@@ -21,6 +21,17 @@ It provides simple CLI commands for inspecting CPU, memory, disk, network, and u
 
 ## Version History
 
+### v0.3.0 (2025-06-08)
+
+- Added system commands:
+  - `who`: list logged-in users
+  - `env`: display environment variables
+  - `top`: show top 5 CPU-consuming processes
+  - `ports`: list open TCP/UDP ports
+  - `crontab`: display user's crontab
+- Modular, testable design per command
+- Full test suite (100% pass)
+
 ### v0.2.1 (2025-06-08)
 
 - Refactored interpreter into modular command structure (`commands/`)
