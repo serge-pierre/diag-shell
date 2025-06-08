@@ -1,6 +1,6 @@
 [project]
 name = "diag-shell"
-version = "0.2.0"
+version = "0.3.0"
 description = "A pluggable system diagnostics shell interpreter using replkit."
 authors = [{ name = "Serge Pierre" }]
 readme = "README.md"
