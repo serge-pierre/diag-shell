@@ -1,5 +1,7 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-[![License](https://img.shields.io/github/license/serge-pierre/replkit)](./LICENSE)
+[![License](https://img.shields.io/github/license/serge-pierre/diag-shell)](./LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/serge-pierre/diag-shell)](https://github.com/serge-pierre/diag-shell/releases)
+![Tested with pytest](https://img.shields.io/badge/tested%20with-pytest-1f425f.svg)
 
 # DiagShell
 
