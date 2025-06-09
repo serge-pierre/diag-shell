@@ -8,12 +8,23 @@ def proc(interpreter, args):
     """
     Display running processes with optional filtering.
 
+    Filtering (keywords):
+      - <kw1> <kw2>     : Match all keywords (AND logic, default)
+      - --or <kw1> ...  : Match any keyword (OR logic, must be followed by 1+ keywords)
+      - --grep <pat>    : Raw line must contain <pat>
+
     Options:
-      <kw1> <kw2>       : Match all keywords (AND)
-      --or <kw1> <kw2>  : Match any keyword (OR)
-      --grep <pattern>  : Filter raw lines containing <pattern>
-      --limit <n>       : Limit number of lines displayed
-      --json            : Output as structured JSON
+      --limit <n>       : Limit number of matching lines displayed (must be > 0)
+      --json            : Output structured process info in JSON format
+
+    Evaluation order:
+      1. Keyword filtering (AND / OR)
+      2. --grep filter (raw lines)
+      3. --limit
+      4. --json formatting
+
+    Example:
+      proc ssh python --grep code --limit 5 --json
     """
     try:
         parsed = parse_args(args, flags={"--or", "--json"}, options={"--grep", "--limit"})

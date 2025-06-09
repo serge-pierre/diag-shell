@@ -4,23 +4,36 @@ from diag_shell.commands.disk import disk
 
 
 def test_disk_output(monkeypatch, capsys):
-    output = (
-        "Filesystem Size Used Avail Use% Mounted on\n" "/dev/sda1 100G 50G 50G 50% /"
-    )
-
-    def mock_run(*args, **kwargs):
-        class Result:
-            stdout = output
-            stderr = ""
-            returncode = 0
-
-        return Result()
-
-    monkeypatch.setattr(subprocess, "run", mock_run)
+    mock_output = """Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop0       111M  111M     0  100% /snap/core18/2855
+/dev/loop1       56M   56M      0  100% /snap/core20/1822"""
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_output, ""))
     disk(interpreter=MockInterpreter(), args=[])
     out = capsys.readouterr().out
     assert "Disk Usage" in out
-    assert "/dev/sda1" in out
+    assert "/dev/loop0" in out
+
+
+def test_disk_grep(monkeypatch, capsys):
+    mock_output = """Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop0       111M  111M     0  100% /snap/core18/2855
+/dev/loop1       56M   56M      0  100% /snap/core20/1822"""
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_output, ""))
+    disk(interpreter=MockInterpreter(), args=["--grep", "core20"])
+    out = capsys.readouterr().out
+    assert "/snap/core20/1822" in out
+    assert "/snap/core18/2855" not in out
+
+
+def test_disk_json(monkeypatch, capsys):
+    mock_output = """Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop0       111M  111M     0  100% /snap/core18/2855"""
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_output, ""))
+    disk(interpreter=MockInterpreter(), args=["--json"])
+    out = capsys.readouterr().out
+    assert "\"Filesystem\"" in out
+    assert "/snap/core18/2855" in out
+    assert "Mounted on" in out
 
 
 class MockInterpreter:

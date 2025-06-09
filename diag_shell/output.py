@@ -40,3 +40,11 @@ def print_info(message: str):
 
 def print_error(message: str):
     print(f"[ERROR] {message}")
+
+
+def print_error(message):
+    print(f"\033[91m{message}\033[0m")
+
+
+def print_warn(message):
+    print(f"\033[93m{message}\033[0m")

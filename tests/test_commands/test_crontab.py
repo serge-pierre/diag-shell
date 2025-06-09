@@ -3,23 +3,35 @@ import subprocess
 from diag_shell.commands.crontab import crontab
 
 
-def test_crontab_entries(monkeypatch, capsys):
-    mock_output = "0 5 * * * /usr/bin/python3 /home/serge/backup.py"
-    monkeypatch.setattr(subprocess, "check_output", lambda *a, **kw: mock_output)
+def test_crontab_output(monkeypatch, capsys):
+    mock_cron = """# Backup job
+0 2 * * * /usr/bin/backup.sh
+"""
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_cron, ""))
     crontab(interpreter=MockInterpreter(), args=[])
     out = capsys.readouterr().out
-    assert "/usr/bin/python3" in out
-    assert "backup.py" in out
+    assert "/usr/bin/backup.sh" in out
 
 
-def test_crontab_none(monkeypatch, capsys):
-    def raise_cpe(*a, **kw):
-        raise subprocess.CalledProcessError(returncode=1, cmd=a)
-
-    monkeypatch.setattr(subprocess, "check_output", raise_cpe)
-    crontab(interpreter=MockInterpreter(), args=[])
+def test_crontab_grep(monkeypatch, capsys):
+    mock_cron = """# Comment
+0 2 * * * /usr/bin/backup.sh
+0 3 * * * /usr/bin/clean.sh
+"""
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_cron, ""))
+    crontab(interpreter=MockInterpreter(), args=["--grep", "clean"])
     out = capsys.readouterr().out
-    assert "no crontab" in out
+    assert "/usr/bin/clean.sh" in out
+    assert "/usr/bin/backup.sh" not in out
+
+
+def test_crontab_json(monkeypatch, capsys):
+    mock_cron = "0 2 * * * /usr/bin/backup.sh"
+    monkeypatch.setattr(subprocess, "run", lambda *a, **kw: subprocess.CompletedProcess(a[0], 0, mock_cron, ""))
+    crontab(interpreter=MockInterpreter(), args=["--json"])
+    out = capsys.readouterr().out
+    assert "\"line\"" in out
+    assert "/usr/bin/backup.sh" in out
 
 
 class MockInterpreter:

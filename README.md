@@ -5,47 +5,12 @@
 
 # DiagShell
 
-DiagShell is a pluggable system diagnostics interpreter based on [replkit](https://github.com/serge-pierre/replkit).
+**DiagShell** is a command-line REPL for exploring live system diagnostics.
+It is based on [`replkit`](https://github.com/serge-pierre/replkit), a flexible CLI interpreter framework.
 
-It provides simple CLI commands for inspecting CPU, memory, disk, network, and uptime information using existing system tools.
+---
 
-## Features
-
-- Modular REPL interpreter based on replkit
-- Diagnostics commands: `cpu`, `mem`, `disk`, `net`, `uptime`, `proc`
-- Formatted and readable output (`print_kv`, `print_table`)
-- Locale-independent parsing (`LANG=C`)
-- Filterable `proc` with support for `--or`
-- Persistent aliases and history
-- Tested with pytest (100% success)
-
-## Version History
-
-### v0.3.0 (2025-06-08)
-
-- Added system commands:
-  - `who`: list logged-in users
-  - `env`: display environment variables
-  - `top`: show top 5 CPU-consuming processes
-  - `ports`: list open TCP/UDP ports
-  - `crontab`: display user's crontab
-- Modular, testable design per command
-- Full test suite (100% pass)
-
-### v0.2.1 (2025-06-08)
-
-- Refactored interpreter into modular command structure (`commands/`)
-- Each command (cpu, mem, disk, etc.) is in its own file
-- Tests added per command in `tests/test_commands/`
-- All legacy and modular tests pass (100%)
-
-### v0.2.0 (2025-06-07)
-
-- First fully stable release with formatted diagnostics output
-- Forced locale (`LANG=C`) for universal parsing
-- `print_table()` for aligned views of disk and memory
-- `proc` supports `AND` and `--or` filtering
-- Unit tests pass (10/10)
+## Getting Started
 
 ### Installation
 
@@ -76,6 +41,87 @@ See Makefile and try make help to see what is possible.
 ```bash
 python diag_repl.py
 ```
+
+---
+
+## Philosophy
+
+DiagShell is designed for **clarity**, **utility**, and **modularity**:
+
+- One-line commands to inspect live system state
+- Simple composable options (`--grep`, `--json`, etc.)
+- Easily extendable with your own commands
+
+---
+
+## Features
+
+### Interactive REPL
+
+- Tab completion
+- Persistent history
+- Extensible interpreter interface
+
+### System Diagnostic Commands
+
+| Command   | Description                               |
+| --------- | ----------------------------------------- |
+| `cpu`     | Load average (1/5/15 min)                 |
+| `mem`     | RAM + Swap usage                          |
+| `disk`    | Disk usage from `df -h`                   |
+| `net`     | Network interfaces & addresses            |
+| `uptime`  | System uptime summary                     |
+| `proc`    | Live processes with keyword filtering     |
+| `env`     | Environment variables                     |
+| `who`     | Logged-in users                           |
+| `top`     | Top CPU consumers (`ps aux --sort=-%cpu`) |
+| `crontab` | Current user crontab entries              |
+
+### Options by Command
+
+| Option    | `proc` | `top` | `disk` | `who` | `env` | `crontab` |
+| --------- | ------ | ----- | ------ | ----- | ----- | --------- |
+| `--grep`  | ✅     | ✅    | ✅     | ✅    | ✅    | ✅        |
+| `--json`  | ✅     | ✅    | ✅     | ✅    | ✅    | ✅        |
+| `--limit` | ✅     | ✅    | ❌     | ❌    | ❌    | ❌        |
+| `--or`    | ✅     | ❌    | ❌     | ❌    | ❌    | ❌        |
+
+_Options combinables entre elles (ex: `proc ssh --limit 5 --json`)_
+
+---
+
+## Testing
+
+```bash
+make test
+```
+
+Couvre tous les modules et options via `pytest`
+
+---
+
+## Developing
+
+```bash
+make format     # Format with black
+make lint       # Lint with flake8
+make install    # Dev install with editable mode
+```
+
+Pour ajouter une commande :
+
+- Créer un fichier `diag_shell/commands/<name>.py`
+- Ajouter une fonction `<name>(interpreter, args)`
+- Enregistrer-la dans `commands/__init__.py`
+
+---
+
+## Versioning
+
+- `v0.1.0` : MVP REPL + commandes de base CPU/MEM/NET
+- `v0.2.0` : Architecture modulaire + tests par commande
+- `v0.3.0` : Ajout commandes système (who, env, ports...)
+- `v0.3.1` : Options enrichies : `--grep`, `--json`, `--limit`, `--or`
 
 ---
 
